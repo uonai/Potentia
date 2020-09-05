@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Potentia;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,14 +53,6 @@ namespace PotentiaLibrary
             return b;
         }
 
-        public static decimal MayhewFormula(int repetitions, decimal weight)
-        {
-            // Mayhew Formula: (100 × weight) / (52.2 + (41.9 × e-0.055 × reps));
-            // Calculates 1 rep max
-
-            return (decimal)0;
-        }
-
         public static decimal OConnerFormula(int repetitions, decimal weight)
         {
             // O'Conner Formula: weight × (1 + 0.025 × reps)
@@ -70,14 +63,6 @@ namespace PotentiaLibrary
             decimal c = weight * b;
 
             return (decimal)c;
-        }
-
-        public static decimal WathanFormula(int repetitions, decimal weight)
-        {
-            // Wathan Formula: (100 × weight) / (48.8 + (53.8 × e ^ -0.075 × reps))
-            // Calculates 1 rep max
-
-            return (decimal)0;
         }
 
     }

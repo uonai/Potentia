@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Schema;
 using PotentiaLibrary;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,40 +16,40 @@ namespace Potentia.Controllers
     [ApiController]
     public class MaxLiftController : ControllerBase
     {
-        private readonly ILogger<MaxLiftController> _logger;
-
-        public MaxLiftController(ILogger<MaxLiftController> logger)
-        {
-            _logger = logger;
-        }
-
-        // POST api/<MaxLiftController>/customary
+        
         [HttpPost]
-        // [Route("customary")]
         public object Post(UserInfo userInfo)
         {
-            string missingInformation = "Accepted metric values: pounds, kilograms";
-
+            Lift calculatedMetrics = Conversions.AssignMetrics(userInfo);
             decimal calculatedKilograms;
             decimal calculatedPounds;
 
-            if (userInfo.Metric == "kilograms") {
-                decimal weightInPounds = Conversions.KilogramsToPounds(userInfo.Weight);
-
-                calculatedKilograms = Calculations.BrzyckiFormula(userInfo.Repetitions, userInfo.Weight); 
-                calculatedPounds = Calculations.BrzyckiFormula(userInfo.Repetitions, weightInPounds);
-            }
-
-            else if (userInfo.Metric == "pounds")
+            if (userInfo.Formula == "brzycki")
             {
-                decimal weightInKilograms = Conversions.PoundsToKilograms(userInfo.Weight);
-
-                calculatedPounds = Calculations.BrzyckiFormula(userInfo.Repetitions, userInfo.Weight);
-                calculatedKilograms = Calculations.BrzyckiFormula(userInfo.Repetitions, weightInKilograms);
+                calculatedKilograms = Calculations.BrzyckiFormula(userInfo.Repetitions, calculatedMetrics.Kilograms);
+                calculatedPounds = Calculations.BrzyckiFormula(userInfo.Repetitions, calculatedMetrics.Pounds);
+            } 
+            else if (userInfo.Formula == "epley")
+            {
+                calculatedKilograms = Calculations.EpleyFormula(userInfo.Repetitions, calculatedMetrics.Kilograms);
+                calculatedPounds = Calculations.EpleyFormula(userInfo.Repetitions, calculatedMetrics.Pounds);
             }
-
-           else return missingInformation;
-
+            else if (userInfo.Formula == "lander")
+            {
+                calculatedKilograms = Calculations.LanderFormula(userInfo.Repetitions, calculatedMetrics.Kilograms);
+                calculatedPounds = Calculations.LanderFormula(userInfo.Repetitions, calculatedMetrics.Pounds);
+            }
+            else if (userInfo.Formula == "lombardi")
+            {
+                calculatedKilograms = Calculations.LombardiFormula(userInfo.Repetitions, calculatedMetrics.Kilograms);
+                calculatedPounds = Calculations.LombardiFormula(userInfo.Repetitions, calculatedMetrics.Pounds);
+            }
+            else if (userInfo.Formula == "oconner")
+            {
+                calculatedKilograms = Calculations.OConnerFormula(userInfo.Repetitions, calculatedMetrics.Kilograms);
+                calculatedPounds = Calculations.OConnerFormula(userInfo.Repetitions, calculatedMetrics.Pounds);
+            }
+            else { calculatedKilograms = 0; calculatedPounds = 0; }
             return new Lift
             {
                 Kilograms = calculatedKilograms,

@@ -10,6 +10,7 @@ namespace Potentia
     {
         private string formattedMetric;
         private decimal formattedWeight;
+        private string formattedFormula;
 
         public decimal Weight
         {
@@ -31,6 +32,14 @@ namespace Potentia
             set {
                 this.formattedMetric = value.ToLower(); 
             } 
+        }
+        public string Formula
+        {
+            get { return this.formattedFormula; }
+            set
+            {
+                this.formattedFormula = value.ToLower();
+            }
         }
     }
 }
