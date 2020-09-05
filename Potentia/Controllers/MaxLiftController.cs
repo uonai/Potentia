@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PotentiaLibrary;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,60 +22,38 @@ namespace Potentia.Controllers
             _logger = logger;
         }
 
-        // GET: api/<MaxLiftController>
-        [HttpGet]
-        public Lift Get()
-        {
-            return new Lift
-            {
-                Kilograms = 0,
-                Pounds = 1
-            };
-        }
-
-        // GET api/<MaxLiftController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<MaxLiftController>
+        // POST api/<MaxLiftController>/customary
         [HttpPost]
-        public Lift Post(UserInfo userInfo)
+        // [Route("customary")]
+        public object Post(UserInfo userInfo)
         {
-            decimal calculatedKilograms = (decimal)0.00;
-            decimal calculatedPounds = (decimal)0.00;
-            var _weight = Convert.ToDecimal(userInfo.Weight);
+            string missingInformation = "Accepted metric values: pounds, kilograms";
+
+            decimal calculatedKilograms;
+            decimal calculatedPounds;
+
             if (userInfo.Metric == "kilograms") {
-              decimal weightInPounds = Conversions.KilogramsToPounds(_weight);
-              calculatedKilograms = Conversions.CalculateOneRepMax(userInfo.Reps, _weight); 
-              calculatedPounds = Conversions.CalculateOneRepMax(userInfo.Reps, weightInPounds);
+                decimal weightInPounds = Conversions.KilogramsToPounds(userInfo.Weight);
+
+                calculatedKilograms = Calculations.BrzyckiFormula(userInfo.Repetitions, userInfo.Weight); 
+                calculatedPounds = Calculations.BrzyckiFormula(userInfo.Repetitions, weightInPounds);
             }
 
             else if (userInfo.Metric == "pounds")
             {
-                decimal weightInKilograms = Conversions.PoundsToKilograms(_weight);
-                calculatedPounds = Conversions.CalculateOneRepMax(userInfo.Reps, _weight);
-                calculatedKilograms = Conversions.CalculateOneRepMax(userInfo.Reps, weightInKilograms);
-            } 
+                decimal weightInKilograms = Conversions.PoundsToKilograms(userInfo.Weight);
+
+                calculatedPounds = Calculations.BrzyckiFormula(userInfo.Repetitions, userInfo.Weight);
+                calculatedKilograms = Calculations.BrzyckiFormula(userInfo.Repetitions, weightInKilograms);
+            }
+
+           else return missingInformation;
+
             return new Lift
             {
                 Kilograms = calculatedKilograms,
                 Pounds = calculatedPounds
             };
-        }
-
-        // PUT api/<MaxLiftController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<MaxLiftController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

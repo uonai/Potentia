@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Potentia
+namespace PotentiaLibrary
 {
     public class Conversions
     {
@@ -18,17 +18,6 @@ namespace Potentia
         {
             var calculatedMeasurement = Decimal.Divide(measurement, (decimal)2.20462262185);
             return calculatedMeasurement;
-        }
-
-        public static decimal CalculateOneRepMax(int reps, decimal weight)
-        {
-            decimal first = (decimal)0.0278 * reps;
-            decimal second = (decimal)1.0278 - first;
-            decimal third = weight / second;
-
-
-            // var calculatedOneRepMax = weight * (36 / (37 - reps));
-            return (decimal)third;
         }
 
     }
